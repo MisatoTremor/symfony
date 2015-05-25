@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Console\Style;
 
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -34,6 +35,7 @@ class SymfonyStyle extends OutputStyle
     private $input;
     private $questionHelper;
     private $progressBar;
+    private $lineLength;
 
     /**
      * @param InputInterface  $input
@@ -42,6 +44,7 @@ class SymfonyStyle extends OutputStyle
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
+        $this->lineLength = min($this->getTerminalWidth(), self::MAX_LINE_LENGTH);
 
         parent::__construct($output);
     }
@@ -49,11 +52,11 @@ class SymfonyStyle extends OutputStyle
     /**
      * Formats a message as a block of text.
      *
-     * @param string|array $messages  The message to write in the block
-     * @param string|null  $type      The block type (added in [] on first line)
-     * @param string|null  $style     The style to apply to the whole block
-     * @param string       $prefix    The prefix for the block
-     * @param bool         $padding   Whether to add vertical padding
+     * @param string|array $messages The message to write in the block
+     * @param string|null  $type     The block type (added in [] on first line)
+     * @param string|null  $style    The style to apply to the whole block
+     * @param string       $prefix   The prefix for the block
+     * @param bool         $padding  Whether to add vertical padding
      */
     public function block($messages, $type = null, $style = null, $prefix = ' ', $padding = false)
     {
@@ -68,9 +71,9 @@ class SymfonyStyle extends OutputStyle
         // wrap and add newlines for each element
         foreach ($messages as $key => $message) {
             $message = OutputFormatter::escape($message);
-            $lines = array_merge($lines, explode("\n", wordwrap($message, self::MAX_LINE_LENGTH - Helper::strlen($prefix))));
+            $lines = array_merge($lines, explode("\n", wordwrap($message, $this->lineLength - Helper::strlen($prefix))));
 
-            if (count($messages) > 1 && $key < count($message)) {
+            if (count($messages) > 1 && $key < count($messages) - 1) {
                 $lines[] = '';
             }
         }
@@ -82,7 +85,7 @@ class SymfonyStyle extends OutputStyle
 
         foreach ($lines as &$line) {
             $line = sprintf('%s%s', $prefix, $line);
-            $line .= str_repeat(' ', self::MAX_LINE_LENGTH - Helper::strlen($line));
+            $line .= str_repeat(' ', $this->lineLength - Helper::strlenWithoutDecoration($this->getFormatter(), $line));
 
             if ($style) {
                 $line = sprintf('<%s>%s</>', $style, $line);
@@ -97,7 +100,7 @@ class SymfonyStyle extends OutputStyle
      */
     public function title($message)
     {
-        $this->writeln(sprintf("\n<fg=blue>%s</fg=blue>\n<fg=blue>%s</fg=blue>\n", $message, str_repeat('=', strlen($message))));
+        $this->writeln(sprintf("\n<comment>%s</>\n<comment>%s</>\n", $message, str_repeat('=', strlen($message))));
     }
 
     /**
@@ -105,7 +108,7 @@ class SymfonyStyle extends OutputStyle
      */
     public function section($message)
     {
-        $this->writeln(sprintf("<fg=blue>%s</fg=blue>\n<fg=blue>%s</fg=blue>\n", $message, str_repeat('-', strlen($message))));
+        $this->writeln(sprintf("<comment>%s</>\n<comment>%s</>\n", $message, str_repeat('-', strlen($message))));
     }
 
     /**
@@ -119,7 +122,7 @@ class SymfonyStyle extends OutputStyle
             $elements
         );
 
-        $this->writeln(implode("\n\n", $elements)."\n");
+        $this->writeln(implode("\n", $elements)."\n");
     }
 
     /**
@@ -183,6 +186,8 @@ class SymfonyStyle extends OutputStyle
      */
     public function table(array $headers, array $rows)
     {
+        $headers = array_map(function ($value) { return sprintf('<info>%s</>', $value); }, $headers);
+
         $table = new Table($this);
         $table->setHeaders($headers);
         $table->setRows($rows);
@@ -306,5 +311,13 @@ class SymfonyStyle extends OutputStyle
         }
 
         return $this->progressBar;
+    }
+
+    private function getTerminalWidth()
+    {
+        $application = new Application();
+        $dimensions = $application->getTerminalDimensions();
+
+        return $dimensions[0] ?: self::MAX_LINE_LENGTH;
     }
 }

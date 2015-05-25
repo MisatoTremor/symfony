@@ -240,6 +240,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals('b', $form->getData());
         $this->assertEquals('b', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitSingleNonExpandedInvalidChoice()
@@ -269,6 +270,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     // In edge cases (for example, when choices are loaded dynamically by a
@@ -286,6 +288,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitSingleNonExpandedEmpty()
@@ -300,6 +303,27 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
+    }
+
+    public function testSubmitSingleNonExpandedEmptyExplicitEmptyChoice()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'multiple' => false,
+            'expanded' => false,
+            'choices' => array(
+                'EMPTY_CHOICE' => 'Empty',
+            ),
+            'choice_value' => function () {
+                return '';
+            },
+        ));
+
+        $form->submit('');
+
+        $this->assertSame('EMPTY_CHOICE', $form->getData());
+        $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     // In edge cases (for example, when choices are loaded dynamically by a
@@ -317,6 +341,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitSingleNonExpandedFalse()
@@ -331,6 +356,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     // In edge cases (for example, when choices are loaded dynamically by a
@@ -348,6 +374,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertNull($form->getData());
         $this->assertSame('', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitSingleNonExpandedObjectChoices()
@@ -366,6 +393,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals($this->objectChoices[1], $form->getData());
         $this->assertEquals('2', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     /**
@@ -373,8 +401,6 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
      */
     public function testLegacySubmitSingleNonExpandedObjectChoices()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
             'expanded' => false,
@@ -394,6 +420,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals($this->objectChoices[1], $form->getData());
         $this->assertEquals('2', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitMultipleNonExpanded()
@@ -408,6 +435,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array('a', 'b'), $form->getData());
         $this->assertEquals(array('a', 'b'), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitMultipleNonExpandedEmpty()
@@ -422,6 +450,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertSame(array(), $form->getData());
         $this->assertSame(array(), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     // In edge cases (for example, when choices are loaded dynamically by a
@@ -439,6 +468,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertSame(array(), $form->getData());
         $this->assertSame(array(), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitMultipleNonExpandedInvalidScalarChoice()
@@ -486,6 +516,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array($this->objectChoices[1], $this->objectChoices[2]), $form->getData());
         $this->assertEquals(array('2', '3'), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     /**
@@ -493,8 +524,6 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
      */
     public function testLegacySubmitMultipleNonExpandedObjectChoices()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $form = $this->factory->create('choice', null, array(
             'multiple' => true,
             'expanded' => false,
@@ -513,6 +542,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array($this->objectChoices[1], $this->objectChoices[2]), $form->getData());
         $this->assertEquals(array('2', '3'), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitSingleExpandedRequired()
@@ -937,6 +967,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit('');
 
         $this->assertNull($form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertTrue($form[0]->getData());
         $this->assertFalse($form[1]->getData());
         $this->assertSame('', $form[0]->getViewData());
@@ -957,6 +989,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit('2');
 
         $this->assertSame($this->objectChoices[1], $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertFalse($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -974,8 +1008,6 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
      */
     public function testLegacySubmitSingleExpandedObjectChoices()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $form = $this->factory->create('choice', null, array(
             'multiple' => false,
             'expanded' => true,
@@ -993,6 +1025,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit('2');
 
         $this->assertSame($this->objectChoices[1], $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertFalse($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -1016,6 +1050,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit('1');
 
         $this->assertSame(1, $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertFalse($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -1120,6 +1156,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array());
 
         $this->assertSame(array(), $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertFalse($form[0]->getData());
         $this->assertFalse($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -1146,6 +1184,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array());
 
         $this->assertSame(array(), $form->getData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmitMultipleExpandedWithEmptyChild()
@@ -1163,6 +1202,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array('', '2'));
 
         $this->assertSame(array('', 2), $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertTrue($form[0]->getData());
         $this->assertFalse($form[1]->getData());
         $this->assertTrue($form[2]->getData());
@@ -1185,6 +1226,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array('1', '2'));
 
         $this->assertSame(array($this->objectChoices[0], $this->objectChoices[1]), $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertTrue($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -1202,8 +1245,6 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
      */
     public function testLegacySubmitMultipleExpandedObjectChoices()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $form = $this->factory->create('choice', null, array(
             'multiple' => true,
             'expanded' => true,
@@ -1221,6 +1262,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array('1', '2'));
 
         $this->assertSame(array($this->objectChoices[0], $this->objectChoices[1]), $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertTrue($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertFalse($form[2]->getData());
@@ -1244,6 +1287,8 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $form->submit(array('1', '2'));
 
         $this->assertSame(array(1, 2), $form->getData());
+        $this->assertTrue($form->isSynchronized());
+
         $this->assertFalse($form[0]->getData());
         $this->assertTrue($form[1]->getData());
         $this->assertTrue($form[2]->getData());
@@ -1272,6 +1317,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertFalse($form->getData());
         $this->assertEquals('0', $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSetDataMultipleNonExpandedAcceptsBoolean()
@@ -1286,6 +1332,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array(false, true), $form->getData());
         $this->assertEquals(array('0', '1'), $form->getViewData());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testPassRequiredToView()
@@ -1329,6 +1376,51 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertTrue($view->vars['expanded']);
+    }
+
+    public function testPassChoiceTranslationDomainToView()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'choices' => $this->choices,
+        ));
+        $view = $form->createView();
+
+        $this->assertNull($view->vars['choice_translation_domain']);
+    }
+
+    public function testChoiceTranslationDomainWithTrueValueToView()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'choices' => $this->choices,
+            'choice_translation_domain' => true,
+        ));
+        $view = $form->createView();
+
+        $this->assertNull($view->vars['choice_translation_domain']);
+    }
+
+    public function testDefaultChoiceTranslationDomainIsSameAsTranslationDomainToView()
+    {
+        $form = $this->factory->create('choice', null, array(
+            'choices' => $this->choices,
+            'translation_domain' => 'foo',
+        ));
+        $view = $form->createView();
+
+        $this->assertEquals('foo', $view->vars['choice_translation_domain']);
+    }
+
+    public function testInheritChoiceTranslationDomainFromParent()
+    {
+        $view = $this->factory
+            ->createNamedBuilder('parent', 'form', null, array(
+                'translation_domain' => 'domain',
+            ))
+            ->add('child', 'choice')
+            ->getForm()
+            ->createView();
+
+        $this->assertEquals('domain', $view['child']->vars['choice_translation_domain']);
     }
 
     public function testPlaceholderIsNullByDefaultIfRequired()

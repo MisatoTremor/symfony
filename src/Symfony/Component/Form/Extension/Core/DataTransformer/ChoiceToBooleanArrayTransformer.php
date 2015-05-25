@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Form\Extension\Core\DataTransformer;
 
+trigger_error('The class '.__NAMESPACE__.'\ChoiceToBooleanArrayTransformer is deprecated since version 2.7 and will be removed in 3.0. Use Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper instead.', E_USER_DEPRECATED);
+
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -18,9 +20,8 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
- * @deprecated Deprecated since Symfony 2.7, to be removed in Symfony 3.0.
- *             Use {@link \Symfony\Component\Form\ChoiceList\LazyChoiceList}
- *             instead.
+ * @deprecated since version 2.7, to be removed in 3.0.
+ *             Use {@link \Symfony\Component\Form\ChoiceList\LazyChoiceList} instead.
  */
 class ChoiceToBooleanArrayTransformer implements DataTransformerInterface
 {
@@ -38,8 +39,6 @@ class ChoiceToBooleanArrayTransformer implements DataTransformerInterface
     {
         $this->choiceList = $choiceList;
         $this->placeholderPresent = $placeholderPresent;
-
-        trigger_error('The class '.__CLASS__.' is deprecated since version 2.7 and will be removed in 3.0. Use Symfony\Component\Form\ChoiceList\LazyChoiceList instead.', E_USER_DEPRECATED);
     }
 
     /**

@@ -240,6 +240,8 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             'expanded' => false,
         ));
 
+        $classPart = in_array('choice_attr', $this->testableFeatures) ? '[@class="foo&bar"]' : '';
+
         $this->assertWidgetMatchesXpath($form->createView(), array('attr' => array('class' => 'my&class')),
 '/select
     [@name="name"]
@@ -247,7 +249,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [not(@required)]
     [
         ./option[@value="&a"][@selected="selected"][.="[trans]Choice&A[/trans]"]
-        /following-sibling::option[@value="&b"][@class="foo&bar"][not(@selected)][.="[trans]Choice&B[/trans]"]
+        /following-sibling::option[@value="&b"]'.$classPart.'[not(@selected)][.="[trans]Choice&B[/trans]"]
     ]
     [count(./option)=2]
 '
@@ -529,6 +531,8 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             'expanded' => false,
         ));
 
+        $classPart = in_array('choice_attr', $this->testableFeatures) ? '[@class="foo&bar"]' : '';
+
         $this->assertWidgetMatchesXpath($form->createView(), array('attr' => array('class' => 'my&class')),
 '/select
     [@name="name[]"]
@@ -537,7 +541,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@multiple="multiple"]
     [
         ./option[@value="&a"][@selected="selected"][.="[trans]Choice&A[/trans]"]
-        /following-sibling::option[@value="&b"][@class="foo&bar"][not(@selected)][.="[trans]Choice&B[/trans]"]
+        /following-sibling::option[@value="&b"]'.$classPart.'[not(@selected)][.="[trans]Choice&B[/trans]"]
     ]
     [count(./option)=2]
 '
@@ -634,6 +638,8 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             'expanded' => true,
         ));
 
+        $classPart = in_array('choice_attr', $this->testableFeatures) ? '[@class="foo&bar"]' : '';
+
         $this->assertWidgetMatchesXpath($form->createView(), array(),
 '/div
     [
@@ -652,7 +658,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
                 ./label
                     [.="[trans]Choice&B[/trans]"]
                     [
-                        ./input[@type="radio"][@name="name"][@id="name_1"][@value="&b"][not(@checked)][@class="foo&bar"]
+                        ./input[@type="radio"][@name="name"][@id="name_1"][@value="&b"][not(@checked)]'.$classPart.'
                     ]
             ]
         /following-sibling::input[@type="hidden"][@id="name__token"][@class="form-control"]
@@ -796,6 +802,8 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             'required' => true,
         ));
 
+        $classPart = in_array('choice_attr', $this->testableFeatures) ? '[@class="foo&bar"]' : '';
+
         $this->assertWidgetMatchesXpath($form->createView(), array(),
 '/div
     [
@@ -814,7 +822,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
                 ./label
                     [.="[trans]Choice&B[/trans]"]
                     [
-                        ./input[@type="checkbox"][@name="name[]"][@id="name_1"][not(@checked)][not(@required)][@class="foo&bar"]
+                        ./input[@type="checkbox"][@name="name[]"][@id="name_1"][not(@checked)][not(@required)]'.$classPart.'
                     ]
             ]
         /following-sibling::div
@@ -840,7 +848,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
 '/select
     [@name="name"]
     [@class="my&class form-control"]
-    [./option[@value="AT"][@selected="selected"][.="[trans]Austria[/trans]"]]
+    [./option[@value="AT"][@selected="selected"][.="Austria"]]
     [count(./option)>200]
 '
         );
@@ -858,7 +866,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@name="name"]
     [@class="my&class form-control"]
     [./option[@value=""][not(@selected)][not(@disabled)][.="[trans]Select&Country[/trans]"]]
-    [./option[@value="AT"][@selected="selected"][.="[trans]Austria[/trans]"]]
+    [./option[@value="AT"][@selected="selected"][.="Austria"]]
     [count(./option)>201]
 '
         );
@@ -1334,7 +1342,10 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
         );
     }
 
-    public function testReadOnly()
+    /**
+     * @group legacy
+     */
+    public function testLegacyReadOnly()
     {
         $form = $this->factory->createNamed('name', 'text', null, array(
             'read_only' => true,
@@ -1388,7 +1399,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
 '/select
     [@name="name"]
     [@class="my&class form-control"]
-    [./option[@value="de"][@selected="selected"][.="[trans]German[/trans]"]]
+    [./option[@value="de"][@selected="selected"][.="German"]]
     [count(./option)>200]
 '
         );
@@ -1402,7 +1413,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
 '/select
     [@name="name"]
     [@class="my&class form-control"]
-    [./option[@value="de_AT"][@selected="selected"][.="[trans]German (Austria)[/trans]"]]
+    [./option[@value="de_AT"][@selected="selected"][.="German (Austria)"]]
     [count(./option)>200]
 '
         );
@@ -1826,8 +1837,8 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="my&class form-control"]
     [not(@required)]
     [./optgroup
-        [@label="[trans]Europe[/trans]"]
-        [./option[@value="Europe/Vienna"][@selected="selected"][.="[trans]Vienna[/trans]"]]
+        [@label="Europe"]
+        [./option[@value="Europe/Vienna"][@selected="selected"][.="Vienna"]]
     ]
     [count(./optgroup)>10]
     [count(.//option)>200]
@@ -1899,14 +1910,13 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
         $form = $this->factory->createNamed('text', 'text', 'value', array(
             'required' => true,
             'disabled' => true,
-            'read_only' => true,
-            'attr' => array('maxlength' => 10, 'pattern' => '\d+', 'class' => 'foobar', 'data-foo' => 'bar'),
+            'attr' => array('readonly' => true, 'maxlength' => 10, 'pattern' => '\d+', 'class' => 'foobar', 'data-foo' => 'bar'),
         ));
 
         $html = $this->renderWidget($form->createView());
 
         // compare plain HTML to check the whitespace
-        $this->assertSame('<input type="text" id="text" name="text" readonly="readonly" disabled="disabled" required="required" maxlength="10" pattern="\d+" class="foobar form-control" data-foo="bar" value="value" />', $html);
+        $this->assertSame('<input type="text" id="text" name="text" disabled="disabled" required="required" readonly="readonly" maxlength="10" pattern="\d+" class="foobar form-control" data-foo="bar" value="value" />', $html);
     }
 
     public function testWidgetAttributeNameRepeatedIfTrue()

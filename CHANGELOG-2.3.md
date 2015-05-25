@@ -7,6 +7,35 @@ in 2.3 minor versions.
 To get the diff for a specific change, go to https://github.com/symfony/symfony/commit/XXX where XXX is the change hash
 To get the diff between two versions, go to https://github.com/symfony/symfony/compare/v2.3.0...v2.3.1
 
+* 2.3.28 (2015-05-10)
+
+ * bug #14266 [HttpKernel] Check if "symfony/proxy-manager-bridge" package is installed (hason)
+ * bug #14501 [ProxyBridge] Fix proxy classnames generation (xphere)
+ * bug #14498 [FrameworkBundle] Added missing log in server:run command (lyrixx)
+ * bug #14484 [SecurityBundle][WebProfiler] check authenticated user by tokenClass instead of username. (aitboudad)
+ * bug #14497 [HttpFoundation] Allow curly braces in trusted host patterns (sgrodzicki)
+ * bug #14436 Show a better error when the port is in use (dosten)
+ * bug #14463 [Validator] Fixed Choice when an empty array is used in the "choices" option (webmozart)
+ * bug #14402 [FrameworkBundle][Translation] Check for 'xlf' instead of 'xliff' (xelaris)
+ * bug #14272 [FrameworkBundle] Workaround php -S ignoring auto_prepend_file (nicolas-grekas)
+ * bug #14345 [FrameworkBundle] Fix Routing\DelegatingLoader resiliency to fatal errors (nicolas-grekas)
+ * bug #14325 [Routing][DependencyInjection] Support .yaml extension in YAML loaders (thunderer)
+ * bug #14344 [Translation][fixed test] refresh cache when resources are no longer fresh. (aitboudad)
+ * bug #14268 [Translator] Cache does not take fallback locales into consideration (sf2.3) (mpdude)
+ * bug #14192 [HttpKernel] Embed the original exception as previous to bounced exceptions (nicolas-grekas)
+ * bug #14102 [Enhancement] netbeans - force interactive shell when limited detection (cordoval)
+ * bug #14191 [StringUtil] Fixed singularification of 'movies' (GerbenWijnja)
+
+* 2.3.27 (2015-04-01)
+
+ * security #14167 CVE-2015-2308 (nicolas-grekas)
+ * security #14166 CVE-2015-2309 (neclimdul)
+ * bug #14010 Replace GET parameters when changed in form (WouterJ)
+ * bug #13991 [Dependency Injection] Improve PhpDumper Performance for huge Containers (BattleRattle)
+ * bug #13997 [2.3+][Form][DoctrineBridge] Improved loading of entities and documents (guilhermeblanco)
+ * bug #13953 [Translation][MoFileLoader] fixed load empty translation. (aitboudad)
+ * bug #13912 [DependencyInjection] Highest precedence for user parameters (lyrixx)
+
 * 2.3.26 (2015-03-17)
 
  * bug #13927 Fixing wrong variable name from #13519 (weaverryan)

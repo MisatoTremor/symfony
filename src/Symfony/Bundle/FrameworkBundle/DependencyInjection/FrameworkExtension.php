@@ -558,6 +558,12 @@ class FrameworkExtension extends Extension
                 'Symfony\\Bundle\\FrameworkBundle\\Templating\\Loader\\FilesystemLoader',
             ));
         }
+
+        if ($container->hasDefinition('assets.packages')) {
+            $container->getDefinition('templating.helper.assets')->replaceArgument(0, new Reference('assets.packages'));
+        } else {
+            $container->removeDefinition('templating.helper.assets');
+        }
     }
 
     /**
@@ -686,6 +692,13 @@ class FrameworkExtension extends Extension
                 $dirs[] = $dir;
             }
         }
+        foreach ($config['paths'] as $dir) {
+            if (is_dir($dir)) {
+                $dirs[] = $dir;
+            } else {
+                throw new \UnexpectedValueException(sprintf('%s defined in translator.paths does not exist or is not a directory', $dir));
+            }
+        }
         if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
             $dirs[] = $dir;
         }
@@ -705,12 +718,22 @@ class FrameworkExtension extends Extension
                 ->in($dirs)
             ;
 
+            $locales = array();
             foreach ($finder as $file) {
                 list($domain, $locale, $format) = explode('.', $file->getBasename(), 3);
-                $files[] = (string) $file;
+                if (!isset($files[$locale])) {
+                    $files[$locale] = array();
+                }
+
+                $files[$locale][] = (string) $file;
             }
 
-            $translator->replaceArgument(4, $files);
+            $options = array_merge(
+                $translator->getArgument(3),
+                array('resource_files' => $files)
+            );
+
+            $translator->replaceArgument(3, $options);
         }
     }
 

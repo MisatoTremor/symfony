@@ -12,8 +12,9 @@
 namespace Symfony\Component\Form\Tests\Extension\Core\ChoiceList;
 
 use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
-use Symfony\Component\Form\Extension\Core\ChoiceList\LazyChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\Form\Tests\Extension\Core\ChoiceList\Fixtures\LazyChoiceListImpl;
+use Symfony\Component\Form\Tests\Extension\Core\ChoiceList\Fixtures\LazyChoiceListInvalidImpl;
 
 /**
  * @group legacy
@@ -21,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 class LazyChoiceListTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var LazyChoiceListTest_Impl
+     * @var LazyChoiceListImpl
      */
     private $list;
 
@@ -29,7 +30,7 @@ class LazyChoiceListTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->list = new LazyChoiceListTest_Impl(new SimpleChoiceList(array(
+        $this->list = new LazyChoiceListImpl(new SimpleChoiceList(array(
             'a' => 'A',
             'b' => 'B',
             'c' => 'C',
@@ -43,55 +44,45 @@ class LazyChoiceListTest extends \PHPUnit_Framework_TestCase
         $this->list = null;
     }
 
-    public function testLegacyGetChoices()
+    public function testGetChoices()
     {
         $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getChoices());
     }
 
-    public function testLegacyGetValues()
+    public function testGetValues()
     {
         $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getValues());
     }
 
-    public function testLegacyGetPreferredViews()
+    public function testGetPreferredViews()
     {
         $this->assertEquals(array(1 => new ChoiceView('b', 'b', 'B')), $this->list->getPreferredViews());
     }
 
-    public function testLegacyGetRemainingViews()
+    public function testGetRemainingViews()
     {
         $this->assertEquals(array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C')), $this->list->getRemainingViews());
     }
 
-    /**
-     * @group legacy
-     */
-    public function testLegacyGetIndicesForChoices()
+    public function testGetIndicesForChoices()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $choices = array('b', 'c');
         $this->assertSame(array(1, 2), $this->list->getIndicesForChoices($choices));
     }
 
-    /**
-     * @group legacy
-     */
-    public function testLegacyGetIndicesForValues()
+    public function testGetIndicesForValues()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $values = array('b', 'c');
         $this->assertSame(array(1, 2), $this->list->getIndicesForValues($values));
     }
 
-    public function testLegacyGetChoicesForValues()
+    public function testGetChoicesForValues()
     {
         $values = array('b', 'c');
         $this->assertSame(array('b', 'c'), $this->list->getChoicesForValues($values));
     }
 
-    public function testLegacyGetValuesForChoices()
+    public function testGetValuesForChoices()
     {
         $choices = array('b', 'c');
         $this->assertSame(array('b', 'c'), $this->list->getValuesForChoices($choices));
@@ -100,33 +91,10 @@ class LazyChoiceListTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Symfony\Component\Form\Exception\InvalidArgumentException
      */
-    public function testLegacyLoadChoiceListShouldReturnChoiceList()
+    public function testLoadChoiceListShouldReturnChoiceList()
     {
-        $list = new LazyChoiceListTest_InvalidImpl();
+        $list = new LazyChoiceListInvalidImpl();
 
         $list->getChoices();
-    }
-}
-
-class LazyChoiceListTest_Impl extends LazyChoiceList
-{
-    private $choiceList;
-
-    public function __construct($choiceList)
-    {
-        $this->choiceList = $choiceList;
-    }
-
-    protected function loadChoiceList()
-    {
-        return $this->choiceList;
-    }
-}
-
-class LazyChoiceListTest_InvalidImpl extends LazyChoiceList
-{
-    protected function loadChoiceList()
-    {
-        return new \stdClass();
     }
 }

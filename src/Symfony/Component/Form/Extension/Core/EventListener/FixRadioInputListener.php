@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Form\Extension\Core\EventListener;
 
+trigger_error('The class '.__NAMESPACE__.'\FixRadioInputListener is deprecated since version 2.7 and will be removed in 3.0. Use Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper instead.', E_USER_DEPRECATED);
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\FormEvent;
@@ -22,9 +24,8 @@ use Symfony\Component\Form\FormEvents;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
- * @deprecated Deprecated since Symfony 2.7, to be removed in Symfony 3.0.
- *             Use {@link \Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper}
- *             instead.
+ * @deprecated since version 2.7, to be removed in 3.0.
+ *             Use {@link \Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper} instead.
  */
 class FixRadioInputListener implements EventSubscriberInterface
 {
@@ -42,8 +43,6 @@ class FixRadioInputListener implements EventSubscriberInterface
     {
         $this->choiceList = $choiceList;
         $this->placeholderPresent = $placeholderPresent;
-
-        trigger_error('The class '.__CLASS__.' is deprecated since version 2.7 and will be removed in 3.0. Use Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper instead.', E_USER_DEPRECATED);
     }
 
     public function preSubmit(FormEvent $event)

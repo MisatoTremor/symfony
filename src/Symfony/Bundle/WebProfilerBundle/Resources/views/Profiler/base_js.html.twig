@@ -109,7 +109,14 @@
 
                             var pathCell = document.createElement('td');
                             pathCell.className = 'sf-ajax-request-url';
-                            pathCell.textContent = request.url;
+                            if ('GET' === request.method) {
+                                var pathLink = document.createElement('a');
+                                pathLink.setAttribute('href', request.url);
+                                pathLink.textContent = request.url;
+                                pathCell.appendChild(pathLink);
+                            } else {
+                                pathCell.textContent = request.url;
+                            }
                             pathCell.setAttribute('title', request.url);
                             row.appendChild(pathCell);
 
@@ -199,7 +206,7 @@
         }
 
         {% if excluded_ajax_paths is defined %}
-            if (window.XMLHttpRequest && XMLHttpRequest.addEventListener) {
+            if (window.XMLHttpRequest && XMLHttpRequest.prototype.addEventListener) {
                 var proxied = XMLHttpRequest.prototype.open;
 
                 XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {

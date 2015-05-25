@@ -81,7 +81,7 @@ class YamlFileLoader extends FileLoader
                     throw new \InvalidArgumentException(sprintf('The file "%s" cannot define both a "path" and a "pattern" attribute. Use only "path".', $path));
                 }
 
-                trigger_error('The "pattern" is deprecated since version 2.2 and will be removed in 3.0. Use the "path" option in the route definition instead.', E_USER_DEPRECATED);
+                trigger_error(sprintf('The "pattern" in file "%s" is deprecated since version 2.2 and will be removed in 3.0. Use the "path" option in the route definition instead.', $path), E_USER_DEPRECATED);
 
                 $config['path'] = $config['pattern'];
                 unset($config['pattern']);
@@ -106,7 +106,7 @@ class YamlFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return is_string($resource) && 'yml' === pathinfo($resource, PATHINFO_EXTENSION) && (!$type || 'yaml' === $type);
+        return is_string($resource) && in_array(pathinfo($resource, PATHINFO_EXTENSION), array('yml', 'yaml'), true) && (!$type || 'yaml' === $type);
     }
 
     /**

@@ -132,8 +132,6 @@ class FinderTest extends Iterator\RealIteratorTestCase
 
     /**
      * @dataProvider getRegexNameTestData
-     *
-     * @group regexName
      */
     public function testRegexName($adapter, $regex)
     {
@@ -308,7 +306,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $finder = $this->buildFinder($adapter);
         $iterator = $finder->files()->name('*.php')->depth('< 1')->in(array(self::$tmpDir, __DIR__))->getIterator();
 
-        $this->assertIterator(array(self::$tmpDir.DIRECTORY_SEPARATOR.'test.php', __DIR__.DIRECTORY_SEPARATOR.'FinderTest.php'), $iterator);
+        $this->assertIterator(array(self::$tmpDir.DIRECTORY_SEPARATOR.'test.php', __DIR__.DIRECTORY_SEPARATOR.'FinderTest.php', __DIR__.DIRECTORY_SEPARATOR.'GlobTest.php'), $iterator);
     }
 
     /**
@@ -477,7 +475,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $i = 0;
 
         foreach ($directory as $dir) {
-            $i++;
+            ++$i;
         }
 
         $this->assertCount($i, $directory);
@@ -489,7 +487,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $i = 0;
 
         foreach ($files as $file) {
-            $i++;
+            ++$i;
         }
 
         $this->assertCount($i, $files);
@@ -506,7 +504,6 @@ class FinderTest extends Iterator\RealIteratorTestCase
 
     /**
      * @dataProvider getContainsTestData
-     * @group grep
      */
     public function testContains($adapter, $matchPatterns, $noMatchPatterns, $expected)
     {
